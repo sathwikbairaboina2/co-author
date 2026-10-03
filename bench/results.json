@@ -1,0 +1,86 @@
+{
+  "machine": {
+    "cpu": "AMD Ryzen 9 7900X 12-Core Processor            ",
+    "cores": 24,
+    "node": "v24.18.0",
+    "platform": "win32 10.0.26200"
+  },
+  "date": "2026-10-03T09:59:16.360Z",
+  "convergence": [
+    {
+      "peers": 2,
+      "editsPerPeer": 100,
+      "aiSuggestionsPerPeer": 2,
+      "medianMs": 1.05,
+      "bytes": 3710
+    },
+    {
+      "peers": 4,
+      "editsPerPeer": 100,
+      "aiSuggestionsPerPeer": 2,
+      "medianMs": 4.56,
+      "bytes": 22686
+    },
+    {
+      "peers": 8,
+      "editsPerPeer": 100,
+      "aiSuggestionsPerPeer": 2,
+      "medianMs": 19.53,
+      "bytes": 107660
+    },
+    {
+      "peers": 16,
+      "editsPerPeer": 100,
+      "aiSuggestionsPerPeer": 2,
+      "medianMs": 85.43,
+      "bytes": 481815
+    },
+    {
+      "peers": 32,
+      "editsPerPeer": 100,
+      "aiSuggestionsPerPeer": 2,
+      "medianMs": 467.78,
+      "bytes": 2136551
+    }
+  ],
+  "offlineMerge": [
+    {
+      "editsPerSide": 100,
+      "medianMs": 0.27,
+      "bytes": 2312
+    },
+    {
+      "editsPerSide": 1000,
+      "medianMs": 2.86,
+      "bytes": 30716
+    },
+    {
+      "editsPerSide": 5000,
+      "medianMs": 17.66,
+      "bytes": 171606
+    }
+  ],
+  "gate": [
+    {
+      "chars": 10064,
+      "legalMedianMs": 0.356,
+      "illegalMedianMs": 0.396
+    },
+    {
+      "chars": 50024,
+      "legalMedianMs": 1.114,
+      "illegalMedianMs": 1.147
+    },
+    {
+      "chars": 199948,
+      "legalMedianMs": 4.086,
+      "illegalMedianMs": 4.151
+    }
+  ],
+  "broadcast": {
+    "tabs": 4,
+    "edits": 200,
+    "medianMs": 0.087,
+    "p95Ms": 0.146
+  }
+}
