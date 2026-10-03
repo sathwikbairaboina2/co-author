@@ -1,5 +1,6 @@
 import * as Y from 'yjs'
 import { getText, type AiAuthor } from '../src/core/schema'
+import { blockText, blockCount, blockAt, textTypeOf } from '../src/core/anchors'
 
 /** A doc with one paragraph per string, shaped exactly like y-prosemirror output. */
 export function makeDoc(blocks: string[], clientID?: number): Y.Doc {
@@ -53,4 +54,15 @@ export async function waitFor(cond: () => boolean, timeoutMs = 2000): Promise<vo
     if (Date.now() - start > timeoutMs) throw new Error('waitFor timed out')
     await new Promise((r) => setTimeout(r, 5))
   }
+}
+
+export function blocksOf(doc: Y.Doc): string[] {
+  return Array.from({ length: blockCount(doc) }, (_, i) => blockText(doc, i))
+}
+
+export function textType(doc: Y.Doc, blockIndex: number): Y.XmlText {
+  const el = blockAt(doc, blockIndex)
+  const t = el && textTypeOf(el)
+  if (!t) throw new Error(`block ${blockIndex} has no text`)
+  return t
 }
