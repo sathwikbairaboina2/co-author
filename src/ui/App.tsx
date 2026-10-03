@@ -3,8 +3,11 @@ import { IconContext } from '@phosphor-icons/react'
 import type { EditorView } from 'prosemirror-view'
 import { Session } from '../app/session'
 import { modelFor, readConfig, type AppConfig } from '../app/config'
-import type { Scope } from '../editor/scope'
+import { scopeFromSelection, type Scope } from '../editor/scope'
+import { setFocusedSuggestion } from '../editor/suggestionPlugin'
 import { Paper } from './Paper'
+import { ProposalsPanel } from './ProposalsPanel'
+import { CommandIsland } from './CommandIsland'
 import { Toasts, useToasts } from './Toasts'
 
 export function App() {
@@ -76,9 +79,10 @@ interface WorkspaceProps {
 }
 
 function Workspace({ session }: WorkspaceProps) {
-  useSyncExternalStore(session.subscribe, session.getSnapshot)
+  const snap = useSyncExternalStore(session.subscribe, session.getSnapshot)
   const viewRef = useRef<EditorView | null>(null)
-  const [, setScope] = useState<Scope | null>(null)
+  const [scope, setScope] = useState<Scope | null>(null)
+  const [running, setRunning] = useState<AbortController | null>(null)
   const { toasts, push } = useToasts()
 
   const accept = useCallback((id: string) => {
@@ -87,13 +91,45 @@ function Workspace({ session }: WorkspaceProps) {
   }, [session, push])
   const reject = useCallback((id: string) => { session.reject(id) }, [session])
 
+  const propose = useCallback(async (instruction: string) => {
+    const view = viewRef.current
+    const sc = view ? scopeFromSelection(view.state) : null
+    if (!sc || sc.to <= sc.from) {
+      push({ tone: 'info', text: 'Place the caret in a paragraph with text first.' })
+      return
+    }
+    const ctl = new AbortController()
+    setRunning(ctl)
+    try {
+      const r = await session.propose({ ...sc, instruction }, ctl.signal)
+      if (r.kind === 'noop') push({ tone: 'info', text: r.reason })
+      if (r.kind === 'draft') push({ tone: 'info', text: 'The text changed while the co-author was writing, so the draft is kept whole.' })
+    } catch (e) {
+      push({ tone: 'error', text: e instanceof Error ? e.message : String(e) })
+    } finally {
+      setRunning(null)
+    }
+  }, [session, push])
+
+  const focus = useCallback((id: string | null) => {
+    if (viewRef.current) setFocusedSuggestion(viewRef.current, id)
+  }, [])
+
+  const reveal = useCallback((id: string) => {
+    const el = viewRef.current?.dom.querySelector(`[data-sg="${CSS.escape(id)}"]`)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el?.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })
+    focus(id)
+  }, [focus])
+
   return (
     <div className="app">
       <aside className="rail" />
       <main className="stage">
         <Paper session={session} viewRef={viewRef} onScope={setScope} onAccept={accept} onReject={reject} />
+        <CommandIsland scope={scope} running={running !== null} onPropose={propose} onStop={() => running?.abort()} />
       </main>
-      <aside className="panel" />
+      <ProposalsPanel views={snap.views} resolved={snap.resolved} onAccept={accept} onReject={reject} onFocus={focus} onReveal={reveal} />
       <Toasts toasts={toasts} />
     </div>
   )
