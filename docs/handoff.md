@@ -35,3 +35,11 @@
 - Not run: the CI workflow on GitHub (no remote), a GIF recording against a real Ollama model.
 - Left for the user: GitHub remote and push, a LICENSE, an optional Ollama-backed re-record, DEVDOCS stretch milestones. Existing IndexedDB documents from the old localhost:5175 origin do not appear on 5490.
 - How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e`, then `pnpm demo:record && pnpm demo:gif` (needs ffmpeg).
+
+## 2026-10-04, Claude (Opus verify), branch main
+
+- Changed: confirmed the two review fixes in `5b86762`. Destroy clears local awareness before the channel closes. A `bye` removes every awareness state that tab announced. `pagehide` sends a `bye`. A peer whose states time out drops from the tab count. Re-recorded `docs/demo.gif` shows exactly 2 humans and 2 Co-author peers and "2 tabs connected" in both rails (checked on the last frame). Rewrote `docs/DEVDOCS.md` as a short developer guide. Fixed the README test count (20 files, 109 tests) and added the ADR 0010 link.
+- Measured: `pnpm test` 20 files, 109 passed. `pnpm build` ok (`dist/sw.js` generated). `pnpm e2e` 2 passed in Chromium. `docs/demo.gif` is 2,744,775 bytes (limit 5,242,880), 12.0 s.
+- Not run in this pass: `pnpm bench` (numbers unchanged from 2026-10-03), Docker compose, the CI workflow (no remote).
+- Left for the user: GitHub remote and push, a LICENSE, a hosted demo, an optional Ollama-backed GIF. Stretch items are listed in DEVDOCS section 7.
+- How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e`.
