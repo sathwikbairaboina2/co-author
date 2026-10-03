@@ -12,3 +12,4 @@ Finish task 5: complete (pnpm demo:gif -> 2649290 bytes at fps10 width1280)
 Finish task 6: complete (ffprobe duration 10.6 s, size 2649290 bytes < 5242880; frames inspected: two peers side by side, B sentence in A, proposal cards, accepted text on both sides, no blank first frame)
 Ruling: GIF lead trimmed 1.8 s in make-demo-gif.mjs - raw recordings open on a blank page for about 1.7 s - none
 Finish task 7: complete (demo.gif embedded at top of README; DEVDOCS commands table updated)
+Finish task 8: complete (actionlint rhysd/actionlint:latest -> no output, exit 0)
