@@ -35,13 +35,13 @@ export function createEditor(mount: HTMLElement, session: { doc: Y.Doc; awarenes
       suggestionPlugin({ ydoc: session.doc, awareness: session.awareness, onAccept: handlers.onAccept, onReject: handlers.onReject }),
     ],
   })
-  const view: EditorView = new EditorView(mount, {
+  return new EditorView(mount, {
     state,
     attributes: { class: 'prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': 'Document', spellcheck: 'true' },
-    dispatchTransaction(tr) {
-      view.updateState(view.state.apply(tr))
-      if (tr.selectionSet || tr.docChanged) handlers.onSelection(scopeFromSelection(view.state))
+    // ProseMirror may dispatch while the view is still being constructed, so use `this` rather than a const binding
+    dispatchTransaction(this: EditorView, tr) {
+      this.updateState(this.state.apply(tr))
+      if (tr.selectionSet || tr.docChanged) handlers.onSelection(scopeFromSelection(this.state))
     },
   })
-  return view
 }
