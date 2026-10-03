@@ -19,3 +19,11 @@
 5. Task 20, `e2e/happy-path.spec.ts` second test: the h1 wraps to two lines, so `End` only reached the end of the first visual line and the plan's `knock first now` assertion could not hold. The test now presses `Control+End` and asserts `when you reconnect. now` in the second tab. The intent (typing in tab A appears in tab B) is unchanged.
 6. Task 21, `bench/run.ts`: the plan's fingerprint serialized the raw encoded state vector and map JSON, which depend on per-replica insertion order, so the convergence check failed for peers=2 although the replicas were equal. The fingerprint now sorts the decoded state vector and canonicalizes map key order. The check still compares text, suggestions, resolved and state vector, and still throws on divergence.
 7. Task 22, `docker-compose.yml`: `@y/websocket-server@0.1.5` crashes on the first sync with `TypeError: store.getClock is not a function` (it mixes the `@y/y` and `yjs` packages). The relay now runs `npx -y y-websocket@2.1.0`, which still ships the server binary and syncs correctly with the `y-websocket` 3.x client used by the app.
+
+## 2026-10-03, Claude (Opus review), branch main
+
+- Changed: reviewed the builder's 24 commits against the spec; fixed stale relay package references in ADR 0004 and 0009 (docs only). No code changes needed.
+- Verified independently: `pnpm test` (19 files, 102 tests passed), `pnpm build` (ok, `dist/sw.js` generated), `pnpm e2e` (2 passed, Chromium). Bench numbers in README match `bench/results.json`.
+- Not run by the reviewer: Docker compose and `pnpm bench` (the builder ran them, see its entry above).
+- Left: record the README GIF; stretch items in DEVDOCS Milestones (remote-tab gating, double-accept dedup, multi-block suggestions, npm package for the core).
+- How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e && pnpm bench`
