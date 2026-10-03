@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Session } from '../src/app/session'
 import { createMockModel } from '../src/ai/mockModel'
 import { blockText } from '../src/core/anchors'
@@ -57,5 +57,40 @@ describe('Session', () => {
   it('caches the snapshot until something changes', async () => {
     const a = await open(`s-${Math.random()}`)
     expect(a.getSnapshot()).toBe(a.getSnapshot())
+  })
+
+  it('removes presence of a destroyed session from other tabs', async () => {
+    const name = `s-${Math.random()}`
+    const a = await open(name)
+    const b = await open(name)
+    await waitFor(() => a.getSnapshot().peers.filter((p) => p.kind === 'human').length === 2)
+    b.destroy()
+    await waitFor(() => a.getSnapshot().peers.filter((p) => p.kind === 'human').length === 1)
+    expect(a.getSnapshot().sync.tabs).toBe(1)
+    expect(a.getSnapshot().peers.filter((p) => p.kind === 'ai')).toHaveLength(1)
+  })
+
+  it('gives tabs with clashing names different names', async () => {
+    const name = `s-${Math.random()}`
+    const tabs = await Promise.all(Array.from({ length: 6 }, () => open(name)))
+    await waitFor(() => tabs.every((t) => t.getSnapshot().peers.filter((p) => p.kind === 'human').length === 6))
+    await waitFor(() => new Set(tabs[0].getSnapshot().peers.filter((p) => p.kind === 'human').map((p) => p.name)).size === 6)
+  })
+
+  it('leaves the channel on pagehide and stops listening after destroy', async () => {
+    const page = new EventTarget()
+    vi.stubGlobal('addEventListener', page.addEventListener.bind(page))
+    vi.stubGlobal('removeEventListener', page.removeEventListener.bind(page))
+    try {
+      const a = await open(`s-${Math.random()}`)
+      page.dispatchEvent(new Event('pagehide'))
+      expect(a.getSnapshot().sync.connected).toBe(false)
+      const b = await open(`s-${Math.random()}`)
+      b.destroy()
+      page.dispatchEvent(new Event('pagehide'))
+      expect(b.getSnapshot().sync.connected).toBe(false)
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })

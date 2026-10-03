@@ -11,8 +11,12 @@ const NAMES = ['Ada', 'Grace', 'Radia', 'Edsger', 'Frances', 'Barbara', 'Donald'
 // Presence colors are data colors for human carets, not UI accents.
 const COLORS = ['#b4532a', '#2f7d5b', '#8a5cb8', '#b0306a', '#3b7c8c', '#7a6a2e']
 
-export function humanPresence(clientId: number): HumanPresence {
-  return { kind: 'human', name: NAMES[clientId % NAMES.length], color: COLORS[clientId % COLORS.length] }
+/** Picks a name by client id, skipping names other peers already use; falls back to a short id suffix. */
+export function humanPresence(clientId: number, taken: readonly string[] = []): HumanPresence {
+  let name = NAMES[clientId % NAMES.length]
+  for (let i = 1; taken.includes(name) && i < NAMES.length; i++) name = NAMES[(clientId + i) % NAMES.length]
+  if (taken.includes(name)) name = `${NAMES[clientId % NAMES.length]} ${(clientId & 0xff).toString(16).padStart(2, '0')}`
+  return { kind: 'human', name, color: COLORS[clientId % COLORS.length] }
 }
 
 export interface PeerEntry {

@@ -52,6 +52,7 @@ export class Session {
   private readonly blockedListeners = new Set<(reason: string) => void>()
   private snapshot: Snapshot | null = null
   private destroyed = false
+  private readonly onPageHide = () => this.provider.disconnect()
 
   private constructor(readonly docName: string, model: TextModel) {
     this.model = model
@@ -65,7 +66,9 @@ export class Session {
     s.provider = new BroadcastChannelProvider(s.doc, s.awareness, opts.docName)
     if (opts.relayUrl) s.relay = new WebsocketProvider(opts.relayUrl, `co-author-${opts.docName}`, s.doc, { awareness: s.awareness })
     s.startAi()
+    globalThis.addEventListener?.('pagehide', s.onPageHide)
     s.doc.on('update', s.bump)
+    s.awareness.on('change', s.dedupeName)
     s.awareness.on('change', s.bump)
     s.provider.onStatus(s.bump)
     return s
@@ -155,6 +158,22 @@ export class Session {
     return this.snapshot
   }
 
+  /** Names are picked before other tabs are known, so the tab with the larger client id renames on a clash. */
+  private dedupeName = () => {
+    const me = this.doc.clientID
+    const mine = this.awareness.getLocalState()?.user as { kind?: string; name?: string } | undefined
+    if (!mine || mine.kind !== 'human') return
+    const others: string[] = []
+    let clash = false
+    this.awareness.getStates().forEach((state, id) => {
+      const u = state.user as { kind?: string; name?: string } | undefined
+      if (id === me || u?.kind !== 'human' || !u.name) return
+      others.push(u.name)
+      if (u.name === mine.name && id < me) clash = true
+    })
+    if (clash) this.awareness.setLocalStateField('user', humanPresence(me, others))
+  }
+
   private bump = () => {
     this.snapshot = null
     this.listeners.forEach((l) => l())
@@ -184,6 +203,9 @@ export class Session {
     this.conn.disconnect()
     this.stopAiPresence()
     this.ai.destroy()
+    globalThis.removeEventListener?.('pagehide', this.onPageHide)
+    // Announce the removal while the channel is still open.
+    this.awareness.setLocalState(null)
     this.provider.destroy()
     this.relay?.destroy()
     void this.persistence?.destroy()

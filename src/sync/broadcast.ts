@@ -26,6 +26,9 @@ export class BroadcastChannelProvider {
   readonly peers = new Set<number>()
   private channel: BroadcastChannel | null = null
   private readonly remoteClients = new Set<number>()
+  /** Awareness client ids each remote tab has announced, so a bye or a timeout can clear them. */
+  private readonly clientsByPeer = new Map<number, Set<number>>()
+  private applyingFrom: number | null = null
   private readonly listeners = new Set<(s: ProviderStatus) => void>()
 
   constructor(readonly doc: Y.Doc, readonly awareness: Awareness, readonly name: string) {
@@ -58,6 +61,7 @@ export class BroadcastChannelProvider {
     this.peers.clear()
     if (this.remoteClients.size > 0) removeAwarenessStates(this.awareness, [...this.remoteClients], REMOTE_ORIGIN)
     this.remoteClients.clear()
+    this.clientsByPeer.clear()
     this.emit()
   }
 
@@ -92,13 +96,36 @@ export class BroadcastChannelProvider {
   }
 
   private onAwarenessUpdate = ({ added, updated, removed }: AwarenessChanges, origin: unknown) => {
+    if (removed.length > 0) this.forgetClients(removed)
     if (origin === REMOTE_ORIGIN) {
-      added.concat(updated).forEach((c) => this.remoteClients.add(c))
+      added.concat(updated).forEach((c) => {
+        this.remoteClients.add(c)
+        if (this.applyingFrom !== null) this.claim(this.applyingFrom, c)
+      })
       removed.forEach((c) => this.remoteClients.delete(c))
       return
     }
     const changed = added.concat(updated, removed)
     this.post({ t: 'awareness', from: this.doc.clientID, update: encodeAwarenessUpdate(this.awareness, changed) })
+  }
+
+  private claim(peer: number, client: number) {
+    let set = this.clientsByPeer.get(peer)
+    if (!set) this.clientsByPeer.set(peer, (set = new Set()))
+    set.add(client)
+  }
+
+  /** A peer whose awareness states are all gone (timeout or bye) no longer counts as a tab. */
+  private forgetClients(clients: number[]) {
+    let changed = false
+    for (const [peer, set] of this.clientsByPeer) {
+      clients.forEach((c) => set.delete(c))
+      if (set.size === 0) {
+        this.clientsByPeer.delete(peer)
+        if (this.peers.delete(peer)) changed = true
+      }
+    }
+    if (changed) this.emit()
   }
 
   private receive(msg: Message) {
@@ -123,11 +150,20 @@ export class BroadcastChannelProvider {
         Y.applyUpdate(this.doc, msg.update, REMOTE_ORIGIN)
         break
       case 'awareness':
-        applyAwarenessUpdate(this.awareness, msg.update, REMOTE_ORIGIN)
+        this.applyingFrom = msg.from
+        try {
+          applyAwarenessUpdate(this.awareness, msg.update, REMOTE_ORIGIN)
+        } finally {
+          this.applyingFrom = null
+        }
         break
-      case 'bye':
+      case 'bye': {
         this.peers.delete(msg.from)
+        const ids = this.clientsByPeer.get(msg.from)
+        this.clientsByPeer.delete(msg.from)
+        if (ids && ids.size > 0) removeAwarenessStates(this.awareness, [...ids], REMOTE_ORIGIN)
         break
+      }
     }
     this.emit()
   }

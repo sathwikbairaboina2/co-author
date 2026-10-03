@@ -15,3 +15,6 @@ Finish task 7: complete (demo.gif embedded at top of README; DEVDOCS commands ta
 Finish task 8: complete (actionlint rhysd/actionlint:latest -> no output, exit 0)
 Finish task 9: complete (pnpm test -> 19 files, 102 passed; pnpm build ok; pnpm e2e -> 2 passed; docker app on 5491 -> 200, /ollama/api/tags -> 200, container co-author-app-1, stopped; README numbers match bench/results.json 467.78 / 1.114; git status clean)
 Finish task 10: complete (handoff appended, plan boxes ticked)
+Review fix: ghost presence - Session.destroy sends setLocalState(null) before closing the channel; provider clears a peer's awareness on bye (tests/broadcast, tests/session) -> pnpm test 109 passed
+Review fix: tab count - pagehide listener disconnects the provider; peers also drop when all of their awareness states are removed (timeout) -> tests added
+Review fix: name collisions - humanPresence(clientId, taken) plus Session.dedupeName renames the larger client id on clash -> tests added

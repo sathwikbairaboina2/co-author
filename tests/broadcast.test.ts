@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import * as Y from 'yjs'
-import { Awareness } from 'y-protocols/awareness'
+import { Awareness, removeAwarenessStates } from 'y-protocols/awareness'
 import { BroadcastChannelProvider } from '../src/sync/broadcast'
 import { getSuggestions } from '../src/core/schema'
 import { blocksOf, makeDoc, suggestionFor, textType, waitFor } from './helpers'
@@ -61,5 +61,25 @@ describe('BroadcastChannelProvider', () => {
     await new Promise((r) => setTimeout(r, 50))
     expect(blocksOf(b.doc)[0]).toBe('quiet')
     expect(b.p.connected).toBe(false)
+  })
+
+  it('drops a peer awareness and tab count when it says bye', async () => {
+    const name = `t-${Math.random()}`
+    const a = tab(makeDoc(['x'], 1), name)
+    const b = tab(new Y.Doc(), name)
+    b.awareness.setLocalStateField('user', { kind: 'human', name: 'Bea', color: '#000' })
+    await waitFor(() => a.awareness.getStates().has(b.doc.clientID) && a.p.peers.size === 1)
+    b.p.disconnect()
+    await waitFor(() => !a.awareness.getStates().has(b.doc.clientID) && a.p.peers.size === 0)
+  })
+
+  it('drops a peer from the count when its awareness times out without a bye', async () => {
+    const name = `t-${Math.random()}`
+    const a = tab(makeDoc(['x'], 1), name)
+    const b = tab(new Y.Doc(), name)
+    b.awareness.setLocalStateField('user', { kind: 'human', name: 'Bea', color: '#000' })
+    await waitFor(() => a.awareness.getStates().has(b.doc.clientID) && a.p.peers.size === 1)
+    removeAwarenessStates(a.awareness, [b.doc.clientID], 'timeout')
+    expect(a.p.peers.size).toBe(0)
   })
 })
