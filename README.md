@@ -2,9 +2,9 @@
 
 **The AI is just another CRDT peer, and it can only propose.** 32 peers converge in 467.78 ms with every AI write gated (1.114 ms per check on a 50,024 character document).
 
-<!-- GIF: record with ScreenToGif or the Chrome DevTools recorder at 1280x800, about 20 s:
-     select a paragraph, Propose, watch the draft stream and split, accept two hunks, reject one,
-     then Settings > Simulate rogue write to show the block toast. Save as docs/demo.gif and replace this comment with: ![Co-author demo](docs/demo.gif) -->
+![Two peers editing one document while the AI peer proposes tracked suggestions](docs/demo.gif)
+
+Recorded with `pnpm demo:record && pnpm demo:gif` (mock model, two tabs synced over BroadcastChannel).
 
 ## What it does
 

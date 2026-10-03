@@ -179,6 +179,8 @@ Requirements: Node 24, pnpm 9.12 (`corepack enable`), Docker Desktop for the con
 | Type check | `pnpm typecheck` |
 | Production build | `pnpm build`, then `pnpm preview` on http://localhost:5490 |
 | End-to-end | `pnpm exec playwright install chromium` once, then `pnpm e2e` |
+| Demo GIF | `pnpm demo:record && pnpm demo:gif` writes `docs/demo.gif` (needs ffmpeg; mock model, port 5493) |
+| Other e2e port | `E2E_PORT=5494 pnpm e2e` |
 | Measurements | `pnpm bench` (writes `bench/results.json`) |
 | Docker app | `docker compose up --build`, then open http://localhost:5491 |
 | Docker relay | `docker compose --profile relay up` (relay on ws://localhost:5492) |
