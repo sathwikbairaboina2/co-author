@@ -2,12 +2,15 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { IconContext } from '@phosphor-icons/react'
 import type { EditorView } from 'prosemirror-view'
 import { Session } from '../app/session'
-import { modelFor, readConfig, type AppConfig } from '../app/config'
+import { modelFor, readConfig, saveModelConfig, type AiMode, type AppConfig } from '../app/config'
+import type { OpenAIConfig } from '../ai/openaiModel'
 import { scopeFromSelection, type Scope } from '../editor/scope'
 import { setFocusedSuggestion } from '../editor/suggestionPlugin'
 import { Paper } from './Paper'
 import { ProposalsPanel } from './ProposalsPanel'
 import { CommandIsland } from './CommandIsland'
+import { Rail } from './Rail'
+import { SettingsDialog } from './SettingsDialog'
 import { Toasts, useToasts } from './Toasts'
 
 export function App() {
@@ -78,12 +81,32 @@ interface WorkspaceProps {
   onConfig(c: AppConfig): void
 }
 
-function Workspace({ session }: WorkspaceProps) {
+function Workspace({ session, config, onConfig }: WorkspaceProps) {
   const snap = useSyncExternalStore(session.subscribe, session.getSnapshot)
   const viewRef = useRef<EditorView | null>(null)
   const [scope, setScope] = useState<Scope | null>(null)
   const [running, setRunning] = useState<AbortController | null>(null)
+  const [offline, setOffline] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const { toasts, push } = useToasts()
+
+  useEffect(() => session.onBlocked((reason) => {
+    push({ tone: 'block', text: 'Blocked a direct write from the co-author. The peer was restarted.', detail: reason })
+  }), [session, push])
+
+  const toggleOffline = (next: boolean) => {
+    setOffline(next)
+    session.setOffline(next)
+  }
+
+  const saveModel = (aiMode: AiMode, openai: OpenAIConfig) => {
+    const next = { ...config, aiMode, openai }
+    saveModelConfig(aiMode, openai)
+    session.setModel(modelFor(next))
+    onConfig(next)
+  }
+
+  const modelLabel = config.aiMode === 'mock' ? 'Mock editor' : config.openai.model
 
   const accept = useCallback((id: string) => {
     const r = session.accept(id)
@@ -124,12 +147,13 @@ function Workspace({ session }: WorkspaceProps) {
 
   return (
     <div className="app">
-      <aside className="rail" />
+      <Rail snap={snap} offline={offline} onOffline={toggleOffline} modelLabel={modelLabel} onOpenSettings={() => setSettingsOpen(true)} />
       <main className="stage">
         <Paper session={session} viewRef={viewRef} onScope={setScope} onAccept={accept} onReject={reject} />
         <CommandIsland scope={scope} running={running !== null} onPropose={propose} onStop={() => running?.abort()} />
       </main>
       <ProposalsPanel views={snap.views} resolved={snap.resolved} onAccept={accept} onReject={reject} onFocus={focus} onReveal={reveal} />
+      <SettingsDialog open={settingsOpen} config={config} onClose={() => setSettingsOpen(false)} onSave={saveModel} onRogueWrite={() => session.simulateRogueWrite()} />
       <Toasts toasts={toasts} />
     </div>
   )
