@@ -2,7 +2,7 @@
 
 A local-first collaborative editor where the AI is just another CRDT peer. The AI can only propose: its edits arrive as tracked suggestions that a human accepts or rejects. The model proposes, the deterministic core disposes.
 
-Status: v0.1 planned (spec, plan and ADRs written on 2026-10-03). Results below are targets until the bench runs.
+Status: v0.1 built on 2026-10-03. Measured results are in the Metrics plan section.
 
 ## Overview and goals
 
@@ -196,7 +196,7 @@ The dev server and the Docker nginx both proxy `/ollama/*` to Ollama (`localhost
 
 ## Metrics plan
 
-Targets only. Real results replace this table after `pnpm bench`, with the machine line it prints.
+Targets, followed by the measured results from `pnpm bench` with the machine line it prints.
 
 | Metric | How it is measured | Target |
 |---|---|---|
@@ -205,6 +205,18 @@ Targets only. Real results replace this table after `pnpm bench`, with the machi
 | Gate overhead | Median of 50 `validateAiUpdate` calls on 10k, 50k and 200k character docs, legal and illegal updates | Under 5 ms at 50k characters |
 | Cross-tab latency | Node BroadcastChannel, 4 providers, 200 edits; median and p95 until all replicas show the edit | Median under 5 ms (Node, not a browser number) |
 | Tests | `pnpm test`, `pnpm e2e` pass counts | all green |
+
+### Results (2026-10-03, AMD Ryzen 9 7900X 12-Core Processor, 24 cores, Node v24.18.0, win32 10.0.26200)
+
+| Metric | Result | Target |
+|---|---|---|
+| Convergence, 32 peers | 467.78 ms | under 1 s |
+| Offline merge, 5000 edits per side | 17.66 ms (171606 bytes) | under 250 ms |
+| Gate, legal update on 50024 chars | 1.114 ms | under 5 ms at 50k characters |
+| Cross-tab latency (Node) | median 0.087 ms, p95 0.146 ms | median under 5 ms |
+| Tests | 102 unit and integration tests in 19 files, 2 Playwright tests | all green |
+
+Full tables are in the README and in `bench/results.json`.
 
 ## Design direction summary
 
@@ -218,7 +230,7 @@ Targets only. Real results replace this table after `pnpm bench`, with the machi
 
 ## Milestones
 
-v0.1 (plan tasks, one commit each):
+v0.1 (plan tasks, one commit each, all done):
 
 1. Scaffold Vite, React, TypeScript and vitest.
 2. Document roots and suggestion schema.
