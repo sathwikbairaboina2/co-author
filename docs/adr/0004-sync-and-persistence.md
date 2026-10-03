@@ -12,4 +12,4 @@ The brief requires local-first behavior, offline use, and cross-tab sync, and al
 
 ## Consequences
 - Zero infrastructure; the demo works from a static host.
-- What we gave up: sync across devices by default. An optional y-websocket relay (`@y/websocket-server` in Docker, `?relay=ws://localhost:1234`) covers it for demos; see ADR 0009.
+- What we gave up: sync across devices by default. An optional y-websocket relay (`y-websocket@2.1.0` server in Docker, `?relay=ws://localhost:1234`) covers it for demos; see ADR 0009.
