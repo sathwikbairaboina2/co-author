@@ -1,6 +1,6 @@
 import * as Y from 'yjs'
-import { getText, type AiAuthor } from '../src/core/schema'
-import { blockText, blockCount, blockAt, textTypeOf } from '../src/core/anchors'
+import { getSuggestions, getText, type AiAuthor, type Suggestion, type SuggestionStatus } from '../src/core/schema'
+import { blockText, blockCount, blockAt, makeRange, textTypeOf } from '../src/core/anchors'
 
 /** A doc with one paragraph per string, shaped exactly like y-prosemirror output. */
 export function makeDoc(blocks: string[], clientID?: number): Y.Doc {
@@ -65,4 +65,31 @@ export function textType(doc: Y.Doc, blockIndex: number): Y.XmlText {
   const t = el && textTypeOf(el)
   if (!t) throw new Error(`block ${blockIndex} has no text`)
   return t
+}
+
+export function suggestionFor(
+  doc: Y.Doc,
+  blockIndex: number,
+  from: number,
+  to: number,
+  insert: string,
+  opts: { id?: string; clientId?: number; status?: SuggestionStatus; instruction?: string } = {},
+): Suggestion {
+  const id = opts.id ?? `s-${blockIndex}-${from}-${to}`
+  return {
+    id,
+    groupId: id,
+    author: aiAuthor(opts.clientId ?? 4242),
+    ...makeRange(doc, blockIndex, from, to),
+    original: blockText(doc, blockIndex).slice(from, to),
+    insert,
+    instruction: opts.instruction ?? 'tighten',
+    status: opts.status ?? 'ready',
+    createdAt: 1,
+  }
+}
+
+export function addSuggestion(doc: Y.Doc, s: Suggestion): Suggestion {
+  getSuggestions(doc).set(s.id, s)
+  return s
 }
