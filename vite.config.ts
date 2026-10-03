@@ -26,7 +26,7 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 5175,
+    port: 5490,
     strictPort: true,
     proxy: {
       '/ollama': {
@@ -36,5 +36,5 @@ export default defineConfig({
       },
     },
   },
-  preview: { port: 5175, strictPort: true },
+  preview: { port: 5490, strictPort: true },
 })

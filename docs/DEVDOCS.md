@@ -38,7 +38,7 @@ flowchart LR
   MODEL["Model mock or OpenAI-compatible"]
   OLLAMA["Ollama on host :11434 via /ollama proxy"]
   OTHER["Other tabs same doc name"]
-  RELAY["y-websocket relay :1234 optional, Docker profile"]
+  RELAY["y-websocket relay :5492 optional, Docker profile"]
 
   UI --> PM
   PM <--> HD
@@ -174,14 +174,14 @@ Requirements: Node 24, pnpm 9.12 (`corepack enable`), Docker Desktop for the con
 | Task | Command |
 |---|---|
 | Install | `pnpm install` |
-| Dev server | `pnpm dev` then open http://localhost:5175 (`?ai=mock`, `?doc=<name>`, `?relay=ws://localhost:1234`) |
+| Dev server | `pnpm dev` then open http://localhost:5490 (`?ai=mock`, `?doc=<name>`, `?relay=ws://localhost:5492`) |
 | Unit and integration tests | `pnpm test` |
 | Type check | `pnpm typecheck` |
-| Production build | `pnpm build`, then `pnpm preview` on http://localhost:5175 |
+| Production build | `pnpm build`, then `pnpm preview` on http://localhost:5490 |
 | End-to-end | `pnpm exec playwright install chromium` once, then `pnpm e2e` |
 | Measurements | `pnpm bench` (writes `bench/results.json`) |
-| Docker app | `docker compose up --build`, then open http://localhost:5175 |
-| Docker relay | `docker compose --profile relay up` (relay on ws://localhost:1234) |
+| Docker app | `docker compose up --build`, then open http://localhost:5491 |
+| Docker relay | `docker compose --profile relay up` (relay on ws://localhost:5492) |
 
 The dev server and the Docker nginx both proxy `/ollama/*` to Ollama (`localhost:11434` in dev, `host.docker.internal:11434` in Docker), so the default base URL `/ollama/v1` works without CORS settings. If Docker cannot reach the host daemon, start Ollama with `OLLAMA_HOST=0.0.0.0`. No AWS services are used, so there is no LocalStack container.
 

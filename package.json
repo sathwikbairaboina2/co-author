@@ -8,9 +8,9 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "vite --port 5175 --strictPort",
+    "dev": "vite --port 5490 --strictPort",
     "build": "pnpm typecheck && vite build",
-    "preview": "vite preview --port 5175 --strictPort",
+    "preview": "vite preview --port 5490 --strictPort",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

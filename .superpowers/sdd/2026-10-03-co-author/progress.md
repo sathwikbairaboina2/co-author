@@ -4,3 +4,5 @@ Ruling: GIF recorded with the mock model (?ai=mock); Ollama re-record left for u
 Ruling: host ports moved into 5490-5499 (dev/preview/e2e 5490, docker app 5491, relay 5492, demo 5493, spare 5494); ADR 0010 - finish task 2
 Ruling: ledger is tracked; stage each ledger line with its task commit - none
 Finish plan: written (docs/superpowers/plans/2026-10-04-finish.md, 10 tasks; planner re-ran pnpm test -> 19 files, 102 passed)
+Finish task 1: complete (pnpm test -> 19 files, 102 passed; pnpm build ok; pnpm e2e -> 2 passed)
+Finish task 2: complete (ports moved to 5490-5499, ADR 0010; pnpm test -> 102 passed; pnpm build ok)

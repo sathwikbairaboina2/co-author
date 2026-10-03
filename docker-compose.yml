@@ -1,8 +1,9 @@
+name: co-author
 services:
   app:
     build: .
     ports:
-      - "5175:5175"
+      - "5491:5175"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -14,4 +15,4 @@ services:
       HOST: 0.0.0.0
       PORT: "1234"
     ports:
-      - "1234:1234"
+      - "5492:1234"

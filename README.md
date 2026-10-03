@@ -17,12 +17,12 @@
 
 ```bash
 pnpm install
-pnpm dev                          # http://localhost:5175
-docker compose up --build         # built app on http://localhost:5175
-docker compose --profile relay up # adds a y-websocket relay on ws://localhost:1234
+pnpm dev                          # http://localhost:5490
+docker compose up --build         # built app on http://localhost:5491
+docker compose --profile relay up # adds a y-websocket relay on ws://localhost:5492
 ```
 
-- Add `?ai=mock` to force the deterministic mock model, `?doc=<name>` to pick a document, and `?relay=ws://localhost:1234` to sync across browsers through the relay.
+- Add `?ai=mock` to force the deterministic mock model, `?doc=<name>` to pick a document, and `?relay=ws://localhost:5492` to sync across browsers through the relay.
 - The default AI backend is the mock. Switch to an OpenAI-compatible endpoint in the model settings. The default is Ollama with model `qwen3.8:27b`, reached through the same-origin path `/ollama/v1`, which the dev server and the Docker image proxy to the host daemon on port 11434.
 - If Docker cannot reach Ollama on the host, start Ollama with `OLLAMA_HOST=0.0.0.0`.
 
@@ -43,7 +43,7 @@ flowchart LR
   MODEL["Model mock or OpenAI-compatible"]
   OLLAMA["Ollama on host :11434 via /ollama proxy"]
   OTHER["Other tabs same doc name"]
-  RELAY["y-websocket relay :1234 optional, Docker profile"]
+  RELAY["y-websocket relay :5492 optional, Docker profile"]
 
   UI --> PM
   PM <--> HD
