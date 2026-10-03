@@ -266,7 +266,7 @@ Stretch, after v0.1:
 - Compaction of the `resolved` map.
 - Sentence-aware hunks and a "re-ask" action for conflicts.
 - Publish the gate and anchor core as an npm package (`@co-author/ai-peer`).
-- Hosted demo with a recorded GIF.
+- Hosted demo (the recorded GIF is done; hosting needs a remote).
 
 ## Decisions
 

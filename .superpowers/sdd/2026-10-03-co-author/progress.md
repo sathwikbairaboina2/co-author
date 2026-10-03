@@ -18,3 +18,5 @@ Finish task 10: complete (handoff appended, plan boxes ticked)
 Review fix: ghost presence - Session.destroy sends setLocalState(null) before closing the channel; provider clears a peer's awareness on bye (tests/broadcast, tests/session) -> pnpm test 109 passed
 Review fix: tab count - pagehide listener disconnects the provider; peers also drop when all of their awareness states are removed (timeout) -> tests added
 Review fix: name collisions - humanPresence(clientId, taken) plus Session.dedupeName renames the larger client id on clash -> tests added
+Review fix: spec F12 and dev port updated to 5491/5492/5490 (ADR 0010); DEVDOCS stretch line updated; demo.gif re-recorded (2744775 bytes, 2 humans + 2 Co-author per rail) -> pnpm test 109 passed, build ok, e2e 2 passed (default and E2E_PORT=5494), docker app 5491 checked
+Ruling: earlier commits with the Claude Sonnet 5.5 trailer left unrewritten - rewriting history is destructive - none; fix commits use the Opus 5.5 trailer
