@@ -5,7 +5,8 @@
 - Changed: plan Tasks 1 to 23 built, one commit per task (see `git log --oneline`). Nothing pushed.
 - Verified: `pnpm test` (19 files, 102 tests passed), `pnpm typecheck` (ok), `pnpm build` (ok, `dist/sw.js` and `dist/manifest.webmanifest` exist), `pnpm e2e` (2 passed in Chromium), `pnpm bench` (wrote `bench/results.json`), `docker compose up -d --build` (app returned 200 on http://localhost:5175/, `/sw.js` 200, `/ollama/api/tags` 200 with Ollama running on the host and a streamed chat completion through the proxy worked), relay profile (two separate Chromium contexts synced through ws://localhost:1234), and a real Ollama proposal through the Docker proxy with `ai=openai` (7 proposal cards, no error toast).
 - Manual checks done with headless Chromium (Playwright): conflict state disables Accept inline and in the panel, accept then Ctrl+Z restores the text, rogue write shows the cobalt block toast and the gate counts 1 blocked, offline in both tabs then reconnect converges, no horizontal scroll at 390px (light and dark) and 1024px.
-- Not verified: the offline-reload behavior of the service worker was not exercised in a browser (only that the build emits `sw.js` and the manifest); the README GIF is a placeholder comment because no recording could be made; layout was inspected through screenshots at 1440 and 390 px only.
+- Offline PWA reload: from `pnpm preview`, with the service worker ready and the Playwright context set offline, a reload still showed the edited content from IndexedDB.
+- Not verified: the README GIF is a placeholder comment because no recording could be made; layout was inspected through screenshots at 1440 and 390 px only.
 - Left: stretch items from DEVDOCS Milestones.
 - How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e && pnpm bench`
 
