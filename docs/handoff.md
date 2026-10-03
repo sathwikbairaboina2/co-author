@@ -27,3 +27,11 @@
 - Not run by the reviewer: Docker compose and `pnpm bench` (the builder ran them, see its entry above).
 - Left: record the README GIF; stretch items in DEVDOCS Milestones (remote-tab gating, double-accept dedup, multi-block suggestions, npm package for the core).
 - How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e && pnpm bench`
+
+## 2026-10-04, Claude (Sonnet builder), branch main
+
+- Changed: host ports moved into 5490-5499 (ADR 0010): dev, preview and e2e 5490, Docker app 5491 (container still 5175), relay 5492 (container 1234), demo recording 5493, spare 5494. Compose project is named `co-author`. Playwright takes `E2E_PORT` and never reuses a foreign server. Added `pnpm demo:record` (two peers plus an AI suggestion, mock model) and `pnpm demo:gif` (ffmpeg), `docs/demo.gif` at the top of the README, and `.github/workflows/ci.yml` (actionlint clean).
+- Measured: `pnpm test` 19 files, 102 passed. `pnpm build` ok. `pnpm e2e` 2 passed (also with `E2E_PORT=5494`). GIF is 2,649,290 bytes, 10.6 s. Docker app returned 200 on http://localhost:5491 (and 200 on `/ollama/api/tags`) as `co-author-app-1`, then stopped.
+- Not run: the CI workflow on GitHub (no remote), a GIF recording against a real Ollama model.
+- Left for the user: GitHub remote and push, a LICENSE, an optional Ollama-backed re-record, DEVDOCS stretch milestones. Existing IndexedDB documents from the old localhost:5175 origin do not appear on 5490.
+- How to verify: `pnpm install && pnpm test && pnpm build && pnpm e2e`, then `pnpm demo:record && pnpm demo:gif` (needs ffmpeg).

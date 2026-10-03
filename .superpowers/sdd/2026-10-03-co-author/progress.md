@@ -13,3 +13,5 @@ Finish task 6: complete (ffprobe duration 10.6 s, size 2649290 bytes < 5242880; 
 Ruling: GIF lead trimmed 1.8 s in make-demo-gif.mjs - raw recordings open on a blank page for about 1.7 s - none
 Finish task 7: complete (demo.gif embedded at top of README; DEVDOCS commands table updated)
 Finish task 8: complete (actionlint rhysd/actionlint:latest -> no output, exit 0)
+Finish task 9: complete (pnpm test -> 19 files, 102 passed; pnpm build ok; pnpm e2e -> 2 passed; docker app on 5491 -> 200, /ollama/api/tags -> 200, container co-author-app-1, stopped; README numbers match bench/results.json 467.78 / 1.114; git status clean)
+Finish task 10: complete (handoff appended, plan boxes ticked)
