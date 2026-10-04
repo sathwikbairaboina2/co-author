@@ -1,6 +1,16 @@
-# Co-author
+# ✍️ Co-author
+
+> AI as a CRDT peer. The AI edits through a gate that only lets suggestions through, never text.
 
 **The AI is just another CRDT peer, and it can only propose.** 32 peers converge in 467.78 ms with every AI write gated (1.114 ms per check on a 50,024 character document).
+
+<!-- readme-header -->
+[![CI](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml/badge.svg)](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/-TypeScript-555) ![Yjs](https://img.shields.io/badge/-Yjs-555) ![ProseMirror](https://img.shields.io/badge/-ProseMirror-555)
+
+| Measured | Source |
+|---|---|
+| **32 peers in 468 ms** | `bench/results.json` |
+| **1.1 ms write gate** | `bench/results.json` |
 
 ![Two peers editing one document while the AI peer proposes tracked suggestions](docs/demo.gif)
 
