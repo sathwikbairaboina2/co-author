@@ -5,7 +5,7 @@
 **The AI is just another CRDT peer, and it can only propose.** 32 peers converge in 467.78 ms with every AI write gated (1.114 ms per check on a 50,024 character document).
 
 <!-- readme-header -->
-[![CI](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml/badge.svg)](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/-TypeScript-555) ![Yjs](https://img.shields.io/badge/-Yjs-555) ![ProseMirror](https://img.shields.io/badge/-ProseMirror-555)
+[![CI](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml/badge.svg)](https://github.com/sathwikbairaboina2/co-author/actions/workflows/ci.yml) ![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![TypeScript](https://img.shields.io/badge/-TypeScript-555) ![Yjs](https://img.shields.io/badge/-Yjs-555) ![ProseMirror](https://img.shields.io/badge/-ProseMirror-555)
 
 | Measured | Source |
 |---|---|
