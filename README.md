@@ -125,3 +125,7 @@ Developer docs: [docs/DEVDOCS.md](docs/DEVDOCS.md).
 - Two peers that accept the same suggestion at the same moment both insert the text; the peers agree, but the insert is duplicated.
 - Only the local AI peer is gated. Remote human tabs are trusted.
 - BroadcastChannel latency is a Node number, not a browser number.
+
+## Status
+
+v0.1 (`package.json`), a working prototype. Runs locally or in Docker; nothing is deployed.
